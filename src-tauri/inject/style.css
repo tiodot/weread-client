@@ -1,0 +1,34 @@
+#pack-top-dom:active {
+  cursor: grabbing;
+}
+
+#pack-top-dom{
+  position:fixed;
+  background:transparent;
+  top:0;
+  width: 100%;
+  height: 20px;
+  cursor: grab;
+  -webkit-app-region: drag;
+  user-select: none;
+  z-index: 90000;
+}
+
+.readerTopBar {
+  display: none;
+}
+
+@media(max-width: 1023px) {
+  .readerContent .app_content {
+      max-width: calc(100vw - 120px);
+  }
+  .readerControls {
+    left: auto;
+    right: 10px;
+    opacity: 0.2;
+    transition: opacity;
+  }
+  .readerControls:hover {
+    opacity: 1;
+  }
+}
