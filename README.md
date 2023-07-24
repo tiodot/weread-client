@@ -1,4 +1,4 @@
-# 基于Taurine简单封装的微信阅读Mac的客户端 
+# 基于Tauri简单封装的微信阅读Mac的客户端 
 
 使用方式：
 1. 本地构建 **yarn build**
