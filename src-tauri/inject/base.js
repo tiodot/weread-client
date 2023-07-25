@@ -1,17 +1,17 @@
 Object.defineProperty(window, '__TAURI_POST_MESSAGE__', {
-  value: (message) => {
-    {
-      window.ipc.postMessage(JSON.stringify(message, (_k, val) => {
-        if (val instanceof Map) {
-          let o = {};
-          val.forEach((v, k) => o[k] = v);
-          return o;
-        } else {
-          return val;
-        }
-      })
-      )
-    }
+  value: function (message) {
+    return window.ipc.postMessage(JSON.stringify(message, (_k, val) => {
+      if (val instanceof Map) {
+        let o = {};
+        val.forEach((v, k) => o[k] = v);
+        return o;
+      } else if (val instanceof Object && '__TAURI_CHANNEL_MARKER__' in val && typeof val.id === 'number') {
+        return `__CHANNEL__:${val.id}`
+      } else {
+        return val;
+      }
+    })
+    )
   }
 })
 

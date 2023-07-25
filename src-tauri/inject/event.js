@@ -18,11 +18,11 @@ const shortcuts = {
 };
 
 const vimKeys = {
-  'j': (options) => scrollPage((options?.delta || 1) * 120),
-  'k': (options) => scrollPage((options?.delta || 1) * -120),
-  'J': (options) => scrollPage( 5 * 120),
-  'K': (options) => scrollPage( -5 * 120),
-  'g': (options) => { 
+  'j': (options) => scrollPage((options?.delta || 2) * 120),
+  'k': (options) => scrollPage((options?.delta || 2) * -120),
+  'J': (options) => scrollPage(5 * 120),
+  'K': (options) => scrollPage(-5 * 120),
+  'g': (options) => {
     if (options?.isDouble) {
       scroll(0, 0);
     }
@@ -33,7 +33,7 @@ const vimKeys = {
   'G': (options) => {
     if (options?.shiftKey) {
       scroll(0, document.body.scrollHeight);
-    } 
+    }
   },
   'n': () => toggleChapter('next'),
   'p': () => toggleChapter('prev')
@@ -68,7 +68,7 @@ function toggleChapter(type) {
   }
   let el = null;
   if (type === 'next') {
-    el = document.querySelector('.readerFooter_button[title="下一章"]'); 
+    el = document.querySelector('.readerFooter_button[title="下一章"]');
   }
   if (type === 'prev') {
     el = document.querySelector('.readerHeaderButton');
@@ -79,14 +79,16 @@ function toggleChapter(type) {
 }
 
 function switchChapter(el) {
-  let {x, y, width, height} = el.getBoundingClientRect();
+  let { x, y, width, height } = el.getBoundingClientRect();
   x += Math.floor(width / 2);
   y += Math.floor(height / 2);
-  const event = new PointerEvent('click', {
-    view: window, detail: 1,
-    pointerId: 1, pointerType: 'mouse',
-      screenX: x, screenY: y, clientX: x, clientY: y, ctrlKey:false, altKey:false, shiftKey:false, metaKey:false,
-      button: 0, buttons: 0,
+  const event = new MouseEvent('click', {
+    view: window, 
+    detail: 1,
+    screenX: x, 
+    screenY: y, 
+    clientX: x, 
+    clientY: y,
   })
   el.dispatchEvent(event);
 }
