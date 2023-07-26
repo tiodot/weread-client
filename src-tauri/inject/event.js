@@ -8,7 +8,11 @@ const shortcuts = {
   '[': () => window.history.back(),
   ']': () => window.history.forward(),
   'b': () => {
-    window.location.href = '/web/shelf'
+    if (document.cookie.match(/wr_name=[^;]+;/)) {
+      window.location.href = '/web/shelf'
+    } else {
+      window.location.href = '/'
+    }
   },
   r: () => window.location.reload(),
   '-': () => zoomOut(),
@@ -100,31 +104,6 @@ function handleShortcut(event) {
   }
 }
 document.addEventListener('DOMContentLoaded', () => {
-  const tauri = window.__TAURI__;
-  const appWindow = tauri.window.appWindow;
-
-  const topDom = document.createElement('div');
-  topDom.id = 'pack-top-dom';
-  document.body.appendChild(topDom);
-  const domEl = document.getElementById('pack-top-dom');
-
-  domEl.addEventListener('mousedown', (e) => {
-    e.preventDefault();
-    if (e.buttons === 1 && e.detail !== 2) {
-      appWindow.startDragging().then();
-    }
-  });
-
-  domEl.addEventListener('touchstart', () => {
-    appWindow.startDragging().then();
-  });
-
-  domEl.addEventListener('dblclick', () => {
-    appWindow.isFullscreen().then((fullscreen) => {
-      appWindow.setFullscreen(!fullscreen).then();
-    });
-  });
-
   document.addEventListener('keyup', (event) => {
     if (/windows|linux/i.test(navigator.userAgent) && event.ctrlKey) {
       handleShortcut(event);
