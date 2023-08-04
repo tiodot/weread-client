@@ -1,18 +1,15 @@
 Object.defineProperty(window, '__TAURI_POST_MESSAGE__', {
-  value: function (message) {
-    return window.ipc.postMessage(JSON.stringify(message, (_k, val) => {
+  value: (message) => window.ipc.postMessage(
+    JSON.stringify(message, (_k, val) => {
       if (val instanceof Map) {
         let o = {};
         val.forEach((v, k) => o[k] = v);
         return o;
-      } else if (val instanceof Object && '__TAURI_CHANNEL_MARKER__' in val && typeof val.id === 'number') {
-        return `__CHANNEL__:${val.id}`
       } else {
         return val;
       }
     })
-    )
-  }
+  )
 })
 
 function __tauri_debounce(func, delay) {
@@ -64,7 +61,7 @@ window.addEventListener('load', () => {
     allXPoints = [];
     yPoint = [1, 1];
   }, 80);
-  const handleWheel =  __tauri_throttle(event => {
+  const handleWheel = __tauri_throttle(event => {
     const { deltaX, deltaY } = event;
     const [min, max] = yPoint
     if (deltaY < min) {
@@ -75,7 +72,7 @@ window.addEventListener('load', () => {
     }
     allXPoints.push(deltaX);
     // 判断是否是返回/前进
-    console.log(allXPoints, yPoint);
+    // console.log(allXPoints, yPoint);
     handleWheelEnd();
   }, 50);
   window.addEventListener('wheel', handleWheel)

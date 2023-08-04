@@ -1,13 +1,13 @@
-function countdown(dom, total = 15) {
-  countdown.retry = (countdown.retry || 0) + 1;
+function __tauri_countdown(dom, total = 15) {
+  __tauri_countdown.retry = (__tauri_countdown.retry || 0) + 1;
   const countdownNumberEl = dom.querySelector('.ti-countdown-number');
   const countdownCircleEl = dom.querySelector('.ti-countdown-circle');
   const initialOffset = 138.2;
   let status = 'playing'; // done, pause
 
   if (!countdownCircleEl || !countdownNumberEl) {
-    countdown.retry <= 3 && setTimeout(() => {
-      countdown(dom, total);
+    __tauri_countdown.retry <= 3 && setTimeout(() => {
+      __tauri_countdown(dom, total);
     }, 500)
     return;
   }
@@ -35,12 +35,13 @@ function countdown(dom, total = 15) {
     if (remainingTime <= 0) {
       clearInterval(countdownInterval);
       countdownNumberEl.textContent = "✔";
-      countdownCircleEl.style.strokeDashoffset = 0;
+      countdownCircleEl.style.strokeDashoffset = -(initialOffset - 0.05);
       status = 'done';
+      __tauri_record(total);
     }
   }
 
-  updateCountdown();
+  // updateCountdown();
   // 每秒更新一次倒计时状态
   let countdownInterval = setInterval(updateCountdown, 1000);
 
@@ -67,7 +68,9 @@ function countdown(dom, total = 15) {
     },
     toggle() {
       if (status === 'done') {
-        return countdown(dom, total);
+        countdownCircleEl.style.strokeDashoffset = -0.1;
+        countdownNumberEl.textContent = total;
+        return __tauri_countdown(dom, total);
       }
       if (status === 'playing') {
         actions.pause();
@@ -79,7 +82,28 @@ function countdown(dom, total = 15) {
   return actions;
 }
 
-function addCountdownDom() {
+async function __tauri_record(duration = 15, bookTitle) {
+  const invoke = window.__TAURI__.invoke
+  if (invoke) {
+    const date = new Date();
+    const time = date.toTimeString().split(' ')[0];
+    const datetime = date.toISOString().replace(/T[\s\S]+$/,` ${time}`);
+    console.log('datetime:', datetime);
+    bookTitle = bookTitle || document.querySelector('.readerTopBar_title_link')?.innerText || ''
+    const [rowsAffected, lastInsertId] = await invoke(
+      "plugin:sql|execute",
+      {
+        db: 'sqlite:weread.db',
+        query: `INSERT INTO count (created_datetime, duration, description) VALUES ($1, $2, $3)`,
+        values: [datetime, duration, bookTitle.trim()],
+      },
+    )
+    console.log('RowAffected', rowsAffected, lastInsertId);
+  }
+}
+
+window.addEventListener('load', async () => {
+  // 插入倒计时节点
   const countdownDom = document.createElement('div');
   countdownDom.classList.add('ti-countdown');
   countdownDom.classList.add('readerControls_item');
@@ -91,15 +115,35 @@ function addCountdownDom() {
   `
   if (document.querySelector('.readerControls')) {
     document.querySelector('.readerControls').appendChild(countdownDom);
-    const countdownAction = countdown(countdownDom, 15);
+    const countdownAction = __tauri_countdown(countdownDom, 15);
 
     countdownDom.addEventListener('click', () => {
       countdownAction.toggle();
     })
   }
-}
-
-window.addEventListener('load', () => {
-  addCountdownDom();
+  // 判断数据库是否存在，不存在时则新建一个
+  const invoke = window.__TAURI__.invoke
+  if (invoke) {
+    const dbPath = 'sqlite:weread.db';
+    const db = await invoke("plugin:sql|load", {
+      db: dbPath,
+    });
+    console.log('connected sqlite db:', db);
+    const [rowsAffected, lastInsertId] = await invoke(
+      "plugin:sql|execute",
+      {
+        db: dbPath,
+        query: `
+        CREATE TABLE IF NOT EXISTS count (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          created_datetime DATETIME,
+          duration INTEGER,
+          description TEXT
+        );
+        `,
+        values: [],
+      },
+    )
+    console.log('result:', rowsAffected, lastInsertId);
+  }
 })
-

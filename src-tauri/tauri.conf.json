@@ -1,7 +1,5 @@
 {
   "build": {
-    "beforeDevCommand": "",
-    "beforeBuildCommand": "",
     "devPath": "../src",
     "distDir": "../src",
     "withGlobalTauri": true
@@ -12,7 +10,13 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": true,
+      "fs": {
+        "all": true,
+        "scope": {
+          "allow": ["$APP/**","$APP/*", "$APP/", "$APP"]
+        }
+      }
     },
     "bundle": {
       "active": true,
@@ -30,7 +34,8 @@
         {
           "domain": "weread.qq.com",
           "windows": ["main"],
-          "enableTauriAPI": true
+          "enableTauriAPI": true,
+          "plugins": ["sql", "store"]
         }
       ]
     },
