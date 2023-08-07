@@ -35,6 +35,7 @@ function __tauri_countdown(dom, total = 15) {
     if (remainingTime <= 0) {
       clearInterval(countdownInterval);
       countdownNumberEl.textContent = "✔";
+      // 避免进度条变动
       countdownCircleEl.style.strokeDashoffset = -(initialOffset - 0.05);
       status = 'done';
       __tauri_record(total);
@@ -45,11 +46,7 @@ function __tauri_countdown(dom, total = 15) {
   // 每秒更新一次倒计时状态
   let countdownInterval = setInterval(updateCountdown, 1000);
 
-  const actions = {
-    reset() {
-      clearInterval(countdownInterval);
-      countdownCircleEl.style.strokeDashoffset = -0.1;
-    },
+  const actions = { 
     pause() {
       clearInterval(countdownInterval);
       countdownNumberEl.textContent = '⏵';
@@ -70,9 +67,12 @@ function __tauri_countdown(dom, total = 15) {
       if (status === 'done') {
         countdownCircleEl.style.strokeDashoffset = -0.1;
         countdownNumberEl.textContent = total;
-        return __tauri_countdown(dom, total);
-      }
-      if (status === 'playing') {
+        startTime = Date.now(); 
+        endTime = startTime + total * 60 * 1000;
+        remainingTime = endTime - startTime;
+        countdownInterval = setInterval(updateCountdown, 1000);
+        status = 'playing';
+      } else if (status === 'playing') {
         actions.pause();
       } else {
         actions.resume();
