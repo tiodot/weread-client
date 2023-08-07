@@ -72,7 +72,7 @@ function toggleChapter(type) {
   }
   let el = null;
   if (type === 'next') {
-    el = document.querySelector('.readerFooter_button[title="下一章"]');
+    el = document.querySelector('.readerFooter_button[title^="下一"]');
   }
   if (type === 'prev') {
     el = document.querySelector('.readerHeaderButton');
@@ -83,6 +83,7 @@ function toggleChapter(type) {
 }
 
 function switchChapter(el) {
+  el.style.boxShadow = '0 0 4px 2px #4183c4';
   let { x, y, width, height } = el.getBoundingClientRect();
   x += Math.floor(width / 2);
   y += Math.floor(height / 2);
