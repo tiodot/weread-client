@@ -40,7 +40,12 @@ const vimKeys = {
     }
   },
   'n': () => toggleChapter('next'),
-  'p': () => toggleChapter('prev')
+  'p': () => toggleChapter('prev'),
+  // w s a d 按键模式，适合左手操作
+  's': () => scrollPage(2 * 120),
+  'w': () => scrollPage(-2 * 120),
+  'a': () => toggleChapter('prev'),
+  'd': () => toggleChapter('next'),
 }
 
 function setZoom(zoom) {

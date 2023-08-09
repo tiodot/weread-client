@@ -36,7 +36,6 @@ fn main() {
         .plugin(tauri_plugin_window_state::Builder::default().build()) 
         .plugin(tauri_plugin_store::Builder::default().build())
         .invoke_system(script.to_string(), window_invoke_responder)
-        // .invoke_system(include_str!("../inject/event.js").to_string(), |_window,_res,_success,_error|{})
         .on_window_event(|event| {
             if let tauri::WindowEvent::CloseRequested { api, .. } = event.event() {
                 #[cfg(target_os = "macos")]
