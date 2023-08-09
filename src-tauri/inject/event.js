@@ -126,9 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let previousKey = '';
   document.addEventListener('keydown', (event) => {
-    console.log('tagName', event.target.tagName, event.key);
     // 针对body做特殊按键处理
-    if ('BODY' === event.target.tagName && vimKeys[event.key]) {
+    if ('BODY' === event.target.tagName && vimKeys[event.key] && !event.metaKey) {
       vimKeys[event.key]({
         delta: Number(previousKey),
         shiftKey: event.shiftKey,

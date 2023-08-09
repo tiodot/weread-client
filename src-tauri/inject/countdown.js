@@ -46,7 +46,7 @@ function __tauri_countdown(dom, total = 15) {
   // 每秒更新一次倒计时状态
   let countdownInterval = setInterval(updateCountdown, 1000);
 
-  const actions = { 
+  const actions = {
     pause() {
       clearInterval(countdownInterval);
       countdownNumberEl.textContent = '⏵';
@@ -67,7 +67,7 @@ function __tauri_countdown(dom, total = 15) {
       if (status === 'done') {
         countdownCircleEl.style.strokeDashoffset = -0.1;
         countdownNumberEl.textContent = total;
-        startTime = Date.now(); 
+        startTime = Date.now();
         endTime = startTime + total * 60 * 1000;
         remainingTime = endTime - startTime;
         countdownInterval = setInterval(updateCountdown, 1000);
@@ -87,7 +87,7 @@ async function __tauri_record(duration = 15, bookTitle) {
   if (invoke) {
     const date = new Date();
     const time = date.toTimeString().split(' ')[0];
-    const datetime = date.toISOString().replace(/T[\s\S]+$/,` ${time}`);
+    const datetime = date.toISOString().replace(/T[\s\S]+$/, ` ${time}`);
     console.log('datetime:', datetime);
     bookTitle = bookTitle || document.querySelector('.readerTopBar_title_link')?.innerText || ''
     const [rowsAffected, lastInsertId] = await invoke(
@@ -119,6 +119,13 @@ window.addEventListener('load', async () => {
 
     countdownDom.addEventListener('click', () => {
       countdownAction.toggle();
+    })
+    // 支持 command + s 暂停/恢复/重新计时
+    document.addEventListener('keydown', (event) => {
+      // 针对body做特殊按键处理
+      if ('BODY' === event.target.tagName && event.key === 's' && event.metaKey) {
+        countdownAction.toggle();
+      }
     })
   }
   // 判断数据库是否存在，不存在时则新建一个
