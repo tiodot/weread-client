@@ -4,9 +4,27 @@
     <meta charset="UTF-8" /> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tauri App</title>
+    <style>
+      body {
+        margin: 40px;
+      }
+    </style>
   </head>
 
   <body>
     loading....
+    <input type="text" id="url">
+    <button id="go">go</button>
+    <div id="log"></div>
+    <script>
+      const $ = document.querySelector.bind(document);
+      const $log = document.querySelector('#log');
+      $log.innerText = 'current: ' + location.href;
+      $('#go').addEventListener('click', () => {
+        console.log('click');
+        $log.innerText += '\n click go...' + ' ' + $('#url').value;
+        location.href = $('#url').value;
+      })
+    </script>
   </body>
 </html>

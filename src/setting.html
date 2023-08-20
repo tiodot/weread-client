@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设置页面</title>
+  <style>
+    body {
+      padding: 40px 20px;
+    }
+    datalist {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      writing-mode: vertical-lr;
+      width: 200px;
+    }
+
+    option {
+      padding: 0;
+      writing-mode: horizontal-tb;
+      cursor: pointer;
+    }
+
+    input[type="range"] {
+      width: 200px;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>倒计时设置(当前：<span id="countNum">15</span> 分钟)</h2>
+  <div class="item">
+    <input type="range" value="15" min="5" max="45" id="count" step="1" name="count" list="tickmarks">
+    <datalist id="tickmarks">
+      <option value="5" label="5"></option>
+      <option value="15" label="15"></option>
+      <option value="25" label="25"></option>
+      <option value="35" label="35"></option>
+      <option value="45" label="45"></option>
+    </datalist>
+  </div>
+
+  <script src="./store.js"></script>
+
+  <script>
+    const $count = document.querySelector('#count');
+    const $num = document.querySelector('#countNum');
+    const $tick = document.querySelector('#tickmarks');
+    const store = new Store('weread.setting.json');
+
+    $count.addEventListener('input', event => {
+      $num.innerText = event.target.value;
+      console.log('event', event.target.value)
+      store.set('countdown', Number(event.target.value)).then(() => {
+        store.save();
+      });
+    });
+
+    $tick.addEventListener('click', event => {
+      if (event.target.tagName === 'OPTION') {
+        const value = event.target.value;
+        $count.value = value;
+        $num.innerText = value;
+        store.set('countdown', Number(value)).then(() => {
+          store.save();
+        });
+      }
+    });
+    store.get('countdown').then(value => {
+      $count.value = value;
+      $num.innerText = value;
+    })
+  </script>
+</body>
+
+</html>

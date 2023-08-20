@@ -19,6 +19,17 @@ const shortcuts = {
   '=': () => zoomIn(),
   '+': () => zoomIn(),
   0: () => setZoom('100%'),
+  ',': () => {
+    if (location.href.endsWith('/setting.html')) {
+      window.history.back();
+      return;
+    }
+    if (window.__tauri_dev__) {
+      location.href = 'http://127.0.0.1:1430/setting.html';
+    } else {
+      location.href = 'tauri://localhost/setting.html';
+    }
+  }
 };
 
 const vimKeys = {
@@ -93,11 +104,11 @@ function switchChapter(el) {
   x += Math.floor(width / 2);
   y += Math.floor(height / 2);
   const event = new MouseEvent('click', {
-    view: window, 
+    view: window,
     detail: 1,
-    screenX: x, 
-    screenY: y, 
-    clientX: x, 
+    screenX: x,
+    screenY: y,
+    clientX: x,
     clientY: y,
   })
   el.dispatchEvent(event);

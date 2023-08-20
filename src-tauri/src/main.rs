@@ -26,7 +26,12 @@ fn get_style(content: &str) -> String {
 
 
 fn scripts() -> String {
-   format!("{};{};{};{}", include_str!("../inject/base.js"), get_style(include_str!("../inject/style.css")), include_str!("../inject/event.js"), include_str!("../inject/countdown.js"))
+  let mut is_dev = "false";
+  #[cfg(dev)]
+  {
+    is_dev = "true";
+  }
+  format!("window.__tauri_dev__={};{};{};{};{}", is_dev, include_str!("../inject/base.js"), get_style(include_str!("../inject/style.css")), include_str!("../inject/event.js"), include_str!("../inject/countdown.js"))
 }
 
 fn main() {

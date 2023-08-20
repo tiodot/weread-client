@@ -113,9 +113,10 @@ window.addEventListener('load', async () => {
       <circle class="ti-countdown-circle" r="22" cx="24" cy="24"></circle>
     </svg>
   `
-  if (document.querySelector('.readerControls')) {
+  const addCountdownDom = (total = 15) => {
+    console.log('total--->', total);
     document.querySelector('.readerControls').appendChild(countdownDom);
-    const countdownAction = __tauri_countdown(countdownDom, 15);
+    const countdownAction = __tauri_countdown(countdownDom, total);
 
     countdownDom.addEventListener('click', () => {
       countdownAction.toggle();
@@ -128,8 +129,11 @@ window.addEventListener('load', async () => {
       }
     })
   }
-  // 判断数据库是否存在，不存在时则新建一个
   const invoke = window.__TAURI__.invoke
+  if (document.querySelector('.readerControls')) {
+    invoke('plugin:store|get', {path: 'weread.setting.json', key: 'countdown'}).then(addCountdownDom)
+  }
+  // 判断数据库是否存在，不存在时则新建一个
   if (invoke) {
     const dbPath = 'sqlite:weread.db';
     const db = await invoke("plugin:sql|load", {
