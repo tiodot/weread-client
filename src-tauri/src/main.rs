@@ -3,6 +3,7 @@
 
 use tauri::api::ipc::{format_callback, format_callback_result, CallbackFn};
 use tauri::{Window, InvokeResponse, Runtime};
+use tauri::Manager;
 
 fn window_invoke_responder<R: Runtime>(
     window: Window<R>,
@@ -31,12 +32,19 @@ fn scripts() -> String {
   {
     is_dev = "true";
   }
-  format!("window.__tauri_dev__={};{};{};{};{}", is_dev, include_str!("../inject/base.js"), get_style(include_str!("../inject/style.css")), include_str!("../inject/event.js"), include_str!("../inject/countdown.js"))
+  format!("window.__tauri_dev__={};{};{};{};{};{}", 
+    is_dev,
+    include_str!("../inject/base.js"),
+    get_style(include_str!("../inject/style.css")),
+    include_str!("../inject/event.js"),
+    include_str!("../inject/countdown.js"),
+    include_str!("../inject/shelf.js")
+  )
 }
 
 fn main() {
     let script = scripts();
-    tauri::Builder::default()
+    tauri::Builder::default() 
         .plugin(tauri_plugin_sql::Builder::default().build())
         .plugin(tauri_plugin_window_state::Builder::default().build()) 
         .plugin(tauri_plugin_store::Builder::default().build())

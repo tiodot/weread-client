@@ -12,6 +12,19 @@ Object.defineProperty(window, '__TAURI_POST_MESSAGE__', {
   )
 })
 
+Object.defineProperty(window, '__INITIAL_STATE__', {
+  get() {
+    return window.__tauri_store__;
+  },
+  set(val) {
+    //console.log('value', JSON.stringify(val));
+    window.__tauri_store__ = val;
+    if (val?.shelf?.booksAndArchives) {
+        window.__tauri__origin_state__ = val;
+    }
+  }
+});
+
 function __tauri_debounce(func, delay) {
   let timerId;
 
